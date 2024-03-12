@@ -1,99 +1,134 @@
 package src.Reflec;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
-interface BaseInterface {
-	
-	public int interfaceInt=0;
-	
-	void method1();
-	
-	int method2(String str);
+import org.w3c.dom.css.Rect;
+
+class Point {
+	// Attributs
+	private int x;
+	private int y;
+
+	// Constructeur
+	public Point(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	// Getters et Setters
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	// methodes
+
+	public String toString() {
+		return "(" + this.x + "," + this.y + ")";
+	}
 }
 
-class BaseClass {
+class Forme {
+	// Attributs
+	private Point centre;
 
-	public int baseInt;
-	
-	private static void method3(){
-		System.out.println("Method3");
+	// Constructeur
+	public Forme(Point centre) {
+		this.centre = centre;
 	}
-	
-	public int method4(){
-		System.out.println("Method4");
-		return 0;
+
+	// Getters
+	public Point getCentre() {
+		return this.centre;
 	}
-	
-	public static int method5(){
-		System.out.println("Method5");
-		return 0;
+
+	// Methodes
+	public void print() {
+		System.out.println("Forme - center: " + this.getCentre());
 	}
-	
-	void method6(){
-		System.out.println("Method6");
-	}
-	
-	// inner public class
-	public class BaseClassInnerClass{}
-		
-	//member public enum
-	public enum BaseClassMemberEnum{}
+
 }
 
-public class TestReflection extends BaseClass implements BaseInterface{
-   
-    public int publicInt;
-	private String privateString="private string";
-	protected boolean protectedBoolean;
-	Object defaultObject;
-	
-	public TestReflection(int i){
-		this.publicInt=i;
+class Rectangle extends Forme {
+	// Attributs
+	private int width;
+	private int height;
+
+	public Rectangle(Point centre, int width, int height) {
+		super(centre);
+		this.width = width;
+		this.height = height;
 	}
 
+	// Getters
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	// Methodes
 	@Override
-	public void method1() {
-		System.out.println("Method1 impl.");
+	public void print() {
+		System.out.println("Rectangle - center: " + this.getCentre() + ", width : " + this.getWidth() + ", height : "
+				+ this.getHeight());
 	}
+}
 
-	@Override
-	public int method2(String str) {
-		System.out.println("Method2 impl.");
-		return 0;
-	}
-	
-	@Override
-	public int method4(){
-		System.out.println("Method4 overriden.");
-		return 0;
-	}
-	
-	public int method5(int i){
-		System.out.println("Method4 overriden.");
-		return 0;
-	}
-	
-	// inner classes
-	public class ConcreteClassPublicClass{}
-	private class ConcreteClassPrivateClass{}
-	protected class ConcreteClassProtectedClass{}
-	class ConcreteClassDefaultClass{}
-	
-	//member enum
-	enum ConcreteClassDefaultEnum{}
-	public enum ConcreteClassPublicEnum{}
-	
-	//member interface
-	public interface ConcreteClassPublicInterface{}
+public class TestReflection {
 
+	public static void main(String[] args) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NoSuchFieldException {
 
-    public static void main(String[] args) {
-        Method method = Class.forName("java.util.HashMap").getMethod("put", Object.class, Object.class);
-        Map<String, String> hm = new HashMap<>();
-        method.invoke(hm, "key", "value");
-        System.out.println(hm); // prints {key=value}
-    }
+		try{
+			// Récupération des données de la class rectangle
+			Class<?> class1 = Rectangle.class;
 
- }
+			// On récupère les attributs declarés dans la classe rectangle
+			Field[] attributs = class1.getDeclaredFields();
+
+			// Affichage
+			System.out.println("Différent attributs de la classe " + class1.getName());
+			for( Field attribut : attributs){
+				System.out.println(attribut.getName() + " de type : " + attribut.getType());
+			}
+
+			// Récupération de la superclass 
+			Class<?> class2 = class1.getSuperclass();
+			Field[] attributs2 = class2.getDeclaredFields();
+
+			// Affichage
+			System.out.println("\nDifférent attributs de la classe " + class2.getName());
+			for( Field attribut : attributs2){
+				System.out.println(attribut.getName() + " de type : " + attribut.getType());
+			}
+			// Création d'une nouvelle instance
+			Object Rectangle = class1.getConstructor(Point.class, int.class, int.class).newInstance(new Point(0, 0), 45, 90);
+			// Utilisation de la méthode print de rectangle
+			Method methode1 = class1.getMethod("print", null);
+			methode1.invoke(Rectangle);
+
+			// Field fld = class1.getField("width");
+			// fld.set(int.class, 50);
+			// methode1.invoke(Rectangle);
+			
+
+			}catch(Throwable e){
+				System.err.println(e);
+			}
+		}
+}
