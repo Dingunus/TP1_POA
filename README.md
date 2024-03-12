@@ -8,5 +8,5 @@ Pour la partie 1, chaque principe a son propre dossier :
   - Liskov substitution principle -> LSP/
   - Interface segregation principle -> ISP/
   - Depdencies inversion principle -> DIP/
-et enfin pour la partie 2 le dossier est Reflec/
+Et enfin pour la partie 2 le dossier est Reflec/
 Le dossier V1 correspond aux codes mauvais pour la SRP.
